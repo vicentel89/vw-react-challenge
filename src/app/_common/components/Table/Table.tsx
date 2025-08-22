@@ -8,6 +8,7 @@ interface TableProps {
   data: Record<string, ReactNode>[];
   caption?: string;
   className?: string;
+  emptyStateText?: string;
 }
 
 export interface TableColumn {
@@ -20,6 +21,9 @@ export interface TableColumn {
  * A responsive and accessible table component with horizontal scrolling support.
  * @param columns - Array of column definitions specifying keys, headers, and optional widths
  * @param data - Array of data rows where each row maps column keys to display values
+ * @param caption - Optional table caption for accessibility
+ * @param className - Additional CSS classes
+ * @param emptyStateText - Text to display when no data is available
  *
  * @example
  * ```tsx
@@ -32,6 +36,7 @@ export interface TableColumn {
  *     { name: 'John Doe', email: 'john@example.com' }
  *   ]}
  *   caption="User table"
+ *   emptyStateText="No users found"
  * />
  * ```
  */
@@ -40,6 +45,7 @@ export default function Table({
   data,
   caption,
   className,
+  emptyStateText = "No data available",
 }: TableProps) {
   const captionId = useId();
 
@@ -71,18 +77,32 @@ export default function Table({
             </tr>
           </thead>
           <tbody>
-            {data.map((row, index) => (
-              <tr key={index} className={styles.tr}>
-                {columns.map((column) => (
-                  <td key={column.key} className={styles.td}>
-                    {row[column.key]}
-                  </td>
-                ))}
-              </tr>
-            ))}
+            {data.length === 0 ? (
+              <EmptyState text={emptyStateText} colSpan={columns.length} />
+            ) : (
+              data.map((row, index) => (
+                <tr key={index} className={styles.tr}>
+                  {columns.map((column) => (
+                    <td key={column.key} className={styles.td}>
+                      {row[column.key]}
+                    </td>
+                  ))}
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
     </div>
+  );
+}
+
+function EmptyState({ text, colSpan }: { text: string; colSpan: number }) {
+  return (
+    <tr>
+      <td colSpan={colSpan} className={styles.emptyState} role="cell">
+        {text}
+      </td>
+    </tr>
   );
 }
