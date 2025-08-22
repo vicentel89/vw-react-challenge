@@ -1,0 +1,17 @@
+import { useQuery } from "@tanstack/react-query";
+
+import { API_URL } from "@/app/_common/constants";
+
+import { Car } from "../types";
+
+export default function useCars() {
+  const { data: cars, ...queryResponse } = useQuery({
+    queryKey: ["cars"],
+    queryFn: async (): Promise<Array<Car>> => {
+      const response = await fetch(`${API_URL}/cars`);
+      return await response.json();
+    },
+  });
+
+  return { ...queryResponse, cars };
+}
