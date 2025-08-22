@@ -19,7 +19,7 @@ const columns: CarColumn[] = [
 ];
 
 export default function CarsPage() {
-  const { cars } = useCars();
+  const { cars, isLoading } = useCars();
 
   return (
     <Container className={styles.container}>
@@ -27,6 +27,8 @@ export default function CarsPage() {
         columns={columns}
         data={formatCarsData(cars || [])}
         caption="Cars"
+        emptyStateText="No cars available"
+        isLoading={isLoading}
       />
     </Container>
   );

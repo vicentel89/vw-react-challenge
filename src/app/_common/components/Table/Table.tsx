@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { ReactNode, useId } from "react";
 
 import styles from "./Table.module.css";
+import Loader from "../Loader/Loader";
 
 interface TableProps {
   columns: TableColumn[];
@@ -9,6 +10,7 @@ interface TableProps {
   caption?: string;
   className?: string;
   emptyStateText?: string;
+  isLoading?: boolean;
 }
 
 export interface TableColumn {
@@ -46,8 +48,10 @@ export default function Table({
   caption,
   className,
   emptyStateText = "No data available",
+  isLoading = false,
 }: TableProps) {
   const captionId = useId();
+  const isEmpty = data.length === 0;
 
   return (
     <div className={clsx(styles.tableContainer, className)}>
@@ -77,19 +81,13 @@ export default function Table({
             </tr>
           </thead>
           <tbody>
-            {data.length === 0 ? (
-              <EmptyState text={emptyStateText} colSpan={columns.length} />
-            ) : (
-              data.map((row, index) => (
-                <tr key={index} className={styles.tr}>
-                  {columns.map((column) => (
-                    <td key={column.key} className={styles.td}>
-                      {row[column.key]}
-                    </td>
-                  ))}
-                </tr>
-              ))
-            )}
+            <BodyContent
+              isLoading={isLoading}
+              isEmpty={isEmpty}
+              emptyStateText={emptyStateText}
+              columns={columns}
+              data={data}
+            />
           </tbody>
         </table>
       </div>
@@ -97,12 +95,56 @@ export default function Table({
   );
 }
 
-function EmptyState({ text, colSpan }: { text: string; colSpan: number }) {
+interface BodyContentProps {
+  isLoading: boolean;
+  isEmpty: boolean;
+  emptyStateText?: string;
+  columns: TableColumn[];
+  data: Record<string, ReactNode>[];
+}
+
+function BodyContent({
+  isLoading,
+  isEmpty,
+  emptyStateText,
+  columns,
+  data,
+}: BodyContentProps) {
+  if (isLoading) {
+    return (
+      <tr>
+        <td
+          colSpan={columns.length}
+          className={styles.loadingState}
+          role="cell"
+        >
+          <Loader />
+        </td>
+      </tr>
+    );
+  }
+
+  if (isEmpty) {
+    return (
+      <tr>
+        <td colSpan={columns.length} className={styles.emptyState} role="cell">
+          {emptyStateText}
+        </td>
+      </tr>
+    );
+  }
+
   return (
-    <tr>
-      <td colSpan={colSpan} className={styles.emptyState} role="cell">
-        {text}
-      </td>
-    </tr>
+    <>
+      {data.map((row, index) => (
+        <tr key={index} className={styles.tr}>
+          {columns.map((column) => (
+            <td key={column.key} className={styles.td}>
+              {row[column.key]}
+            </td>
+          ))}
+        </tr>
+      ))}
+    </>
   );
 }
