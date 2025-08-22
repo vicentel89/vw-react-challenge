@@ -15,7 +15,7 @@
   font-size: var(--font-size-sm);
   line-height: 1.25rem;
 
-  @media (min-width: 768px) {
+  @media (--screen-md) {
     font-size: var(--font-size-md);
   }
 
@@ -35,7 +35,7 @@
   text-align: left;
   color: var(--color-neutral-700);
 
-  @media (min-width: 768px) {
+  @media (--screen-md) {
     padding: var(--spacing-lg);
     font-size: var(--font-size-lg);
   }
@@ -51,7 +51,7 @@
   background-color: var(--color-brand-600);
   white-space: nowrap;
 
-  @media (min-width: 768px) {
+  @media (--screen-md) {
     padding: var(--spacing-md) var(--spacing-lg);
   }
 
@@ -81,7 +81,7 @@
   vertical-align: top;
   word-wrap: break-word;
 
-  @media (min-width: 768px) {
+  @media (--screen-md) {
     padding: var(--spacing-md) var(--spacing-lg);
   }
 }
