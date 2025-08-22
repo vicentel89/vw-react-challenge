@@ -1,6 +1,7 @@
 "use client";
 
 import useCars from "./_api/useCars";
+import { formatCarsData } from "./_utils/formatCarsData";
 import styles from "./page.module.css";
 import { Car } from "./types";
 import Container from "../_common/components/Container/Container";
@@ -32,21 +33,4 @@ export default function CarsPage() {
       />
     </Container>
   );
-}
-
-function formatCarsData(
-  cars: Array<Car>
-): Array<Record<string, string | number>> {
-  if (!cars) return [];
-
-  const formattedCars = cars.map(({ id: _id, mileage, ...car }) => ({
-    ...car,
-    mileage: formatMileage(mileage),
-  }));
-
-  return formattedCars;
-}
-
-function formatMileage(mileage: number): string {
-  return `${mileage.toLocaleString("de-DE")} km`;
 }
