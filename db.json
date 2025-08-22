@@ -1,0 +1,31 @@
+{
+  "cars": [
+    {
+      "id": "1",
+      "brand": "Volkswagen",
+      "model": "Golf",
+      "year": 2020,
+      "color": "blue",
+      "mileage": 15000
+    }
+  ],
+  "brands": [
+    { "id": "1", "name": "Volkswagen" },
+    { "id": "2", "name": "Audi" },
+    { "id": "3", "name": "Bentley" },
+    { "id": "4", "name": "Porsche" }
+  ],
+  "models": [
+    { "id": "1", "brandId": "1", "name": "Golf" },
+    { "id": "2", "brandId": "1", "name": "Jetta" },
+    { "id": "3", "brandId": "1", "name": "Passat" },
+    { "id": "4", "brandId": "1", "name": "Tiguan" },
+    { "id": "5", "brandId": "2", "name": "A3" },
+    { "id": "6", "brandId": "2", "name": "A4" },
+    { "id": "7", "brandId": "2", "name": "Q5" },
+    { "id": "8", "brandId": "3", "name": "Continental" },
+    { "id": "9", "brandId": "3", "name": "Flying Spur" },
+    { "id": "10", "brandId": "4", "name": "911" },
+    { "id": "11", "brandId": "4", "name": "Cayenne" }
+  ]
+}
