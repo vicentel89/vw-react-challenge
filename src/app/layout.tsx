@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Nunito_Sans, Montserrat } from "next/font/google";
+
 import "./globals.css";
+import QueryProvider from "./_lib/react-query/QueryProvider";
 
 const nunitoSans = Nunito_Sans({
   variable: "--font-nunito-sans",
@@ -24,10 +26,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${nunitoSans.variable} ${montserrat.variable}`}>
-        {children}
-      </body>
-    </html>
+    <QueryProvider>
+      <html lang="en">
+        <body className={`${nunitoSans.variable} ${montserrat.variable}`}>
+          {children}
+        </body>
+      </html>
+    </QueryProvider>
   );
 }

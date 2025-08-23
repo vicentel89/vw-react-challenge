@@ -7,6 +7,14 @@
       "year": 2020,
       "color": "blue",
       "mileage": 15000
+    },
+    {
+      "id": "2",
+      "brand": "Audi",
+      "model": "A4",
+      "year": 2021,
+      "color": "red",
+      "mileage": 10000
     }
   ],
   "brands": [

@@ -1,0 +1,5 @@
+/* Custom Media Queries */
+@custom-media --breakpoint-sm (min-width: 640px);
+@custom-media --breakpoint-md (min-width: 768px);
+@custom-media --breakpoint-lg (min-width: 1024px);
+@custom-media --breakpoint-xl (min-width: 1280px);

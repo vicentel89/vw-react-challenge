@@ -12,8 +12,8 @@
   --color-neutral-900: #111111;
   --color-neutral-950: #0a0a0a;
 
-  --color-brand-100: #c1ccea;
-  --color-brand-200: #b0bada;
+  --color-brand-100: #e7ecf9;
+  --color-brand-200: #bfc7e4;
   --color-brand-300: #8794c4;
   --color-brand-400: #516296;
   --color-brand-500: #355084;
@@ -88,6 +88,19 @@
   --radius-md: calc(12rem / 16);
   --radius-lg: calc(16rem / 16);
   --radius-xl: calc(24rem / 16);
+
+  /* Shadow */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.1);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 1px 5px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 1px 10px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 1px 20px rgba(0, 0, 0, 0.1);
+
+  /* Breakpoints */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
 }
 
 html,
