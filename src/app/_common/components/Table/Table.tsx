@@ -80,7 +80,7 @@ export default function Table({
               ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody aria-live="polite" aria-busy={isLoading}>
             <BodyContent
               isLoading={isLoading}
               isEmpty={isEmpty}
