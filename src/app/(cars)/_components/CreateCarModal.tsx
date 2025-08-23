@@ -1,3 +1,4 @@
+import Button from "@/app/_common/components/Button/Button";
 import { Modal, ModalProps } from "@/app/_common/components/Modal/Modal";
 import Select from "@/app/_common/components/Select/Select";
 
@@ -18,6 +19,12 @@ export default function CreateCarModal({
         <YearSelect />
         <MileageSelect />
         <ColorSelect />
+        <div className={styles.actions}>
+          <Button type="button" variant="secondary" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button type="submit">Create Car</Button>
+        </div>
       </form>
     </Modal>
   );
