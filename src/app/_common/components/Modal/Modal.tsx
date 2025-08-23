@@ -4,7 +4,7 @@ import { PiXBold } from "react-icons/pi";
 import styles from "./Modal.module.css";
 import { IconButton } from "../IconButton/IconButton";
 
-interface ModalProps {
+export interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   children: ReactNode;
