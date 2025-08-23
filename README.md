@@ -27,12 +27,6 @@ Install the dependencies:
 npm install
 ```
 
-Run the JSON server:
-
-```bash
-npx json-server db.json --port 3001
-```
-
 Run the development server:
 
 ```bash

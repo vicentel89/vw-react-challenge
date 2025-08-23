@@ -82,6 +82,17 @@
   --spacing-xl: calc(24rem / 16);
   --spacing-2xl: calc(32rem / 16);
 
+  /* Sizes */
+  --size-2xs: calc(12rem / 16);
+  --size-xs: calc(16rem / 16);
+  --size-sm: calc(20rem / 16);
+  --size-md: calc(24rem / 16);
+  --size-lg: calc(28rem / 16);
+  --size-xl: calc(32rem / 16);
+  --size-2xl: calc(40rem / 16);
+  --size-3xl: calc(48rem / 16);
+  --size-4xl: calc(56rem / 16);
+
   /* Radius */
   --radius-xs: calc(4rem / 16);
   --radius-sm: calc(8rem / 16);
