@@ -8,6 +8,7 @@ interface TableProps {
   columns: TableColumn[];
   data: Record<string, ReactNode>[];
   caption?: string;
+  actions?: ReactNode;
   className?: string;
   emptyFallback?: ReactNode;
   errorFallback?: ReactNode;
@@ -51,6 +52,7 @@ export default function Table({
   columns,
   data,
   caption,
+  actions,
   className,
   emptyFallback = "No data available",
   errorFallback = "An error occurred",
@@ -62,11 +64,14 @@ export default function Table({
 
   return (
     <div className={clsx(styles.tableContainer, className)}>
-      {caption && (
-        <div id={captionId} className={styles.caption}>
-          {caption}
-        </div>
-      )}
+      <div className={styles.header}>
+        {caption && (
+          <div id={captionId} className={styles.caption}>
+            {caption}
+          </div>
+        )}
+        {actions && <div className={styles.actions}>{actions}</div>}
+      </div>
       <div className={styles.tableWrapper}>
         <table
           className={styles.table}

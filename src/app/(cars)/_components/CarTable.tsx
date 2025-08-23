@@ -1,5 +1,6 @@
 "use client";
 
+import Button from "@/app/_common/components/Button/Button";
 import Table, { TableColumn } from "@/app/_common/components/Table/Table";
 
 import useCars from "../_api/useCars";
@@ -26,6 +27,7 @@ export default function CarTable() {
       columns={columns}
       data={formatCarsData(cars || [])}
       caption="Cars"
+      actions={<Button size="md">Add Car</Button>}
       emptyFallback="No cars available"
       errorFallback="Error loading cars. Please try again."
       isLoading={isLoading}
