@@ -1,4 +1,10 @@
-import { useController, UseControllerProps, useForm } from "react-hook-form";
+import { useEffect, useMemo } from "react";
+import {
+  useController,
+  UseControllerProps,
+  useForm,
+  useWatch,
+} from "react-hook-form";
 
 import Button from "@/app/_common/components/Button/Button";
 import { Modal, ModalProps } from "@/app/_common/components/Modal/Modal";
@@ -6,6 +12,7 @@ import Select from "@/app/_common/components/Select/Select";
 
 import styles from "./CreateCarModal.module.css";
 import useBrands from "../_api/useBrands";
+import useModels from "../_api/useModels";
 
 interface FormValues {
   brand: string | null;
@@ -21,7 +28,11 @@ export default function CreateCarModal({
   isOpen,
   onClose,
 }: CreateCarModalProps) {
-  const { control } = useForm<FormValues>({
+  const {
+    control,
+    handleSubmit: formSubmit,
+    reset,
+  } = useForm<FormValues>({
     defaultValues: {
       brand: null,
       model: null,
@@ -32,16 +43,25 @@ export default function CreateCarModal({
     mode: "onChange",
   });
 
+  const handleSubmit = formSubmit((data) => {
+    console.log(data);
+  });
+
+  const handleClose = () => {
+    reset();
+    onClose();
+  };
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <form className={styles.form}>
+    <Modal isOpen={isOpen} onClose={handleClose}>
+      <form className={styles.form} onSubmit={handleSubmit}>
         <BrandSelect name="brand" control={control} />
         <ModelSelect name="model" control={control} />
         <YearSelect name="year" control={control} />
         <MileageSelect name="mileage" control={control} />
         <ColorSelect name="color" control={control} />
         <div className={styles.actions}>
-          <Button type="button" variant="secondary" onClick={onClose}>
+          <Button type="button" variant="secondary" onClick={handleClose}>
             Cancel
           </Button>
           <Button type="submit">Create Car</Button>
@@ -73,15 +93,39 @@ function BrandSelect(props: UseControllerProps<FormValues>) {
 
 function ModelSelect(props: UseControllerProps<FormValues>) {
   const { field } = useController(props);
+  const selectedBrandName = useWatch({ control: props.control, name: "brand" });
 
-  const options = [
-    {
-      value: "A3",
-      label: "A3",
-    },
-  ];
+  const { brands } = useBrands();
+  const selectedBrandId = useMemo(() => {
+    const selectedBrand = brands?.find(
+      (brand) => brand.name === selectedBrandName
+    );
+    return selectedBrand?.id || "";
+  }, [brands, selectedBrandName]);
 
-  return <Select {...field} label="Model" options={options} />;
+  const { models, isLoading } = useModels(selectedBrandId);
+
+  const modelOptions =
+    models?.map((model) => ({
+      value: model.name,
+      label: model.name,
+    })) || [];
+
+  useEffect(() => {
+    if (selectedBrandName) {
+      field.onChange(null);
+    }
+  }, [selectedBrandName]);
+
+  return (
+    <Select
+      {...field}
+      label="Model"
+      options={modelOptions}
+      isLoading={isLoading}
+      disabled={!selectedBrandName}
+    />
+  );
 }
 
 function YearSelect(props: UseControllerProps<FormValues>) {
