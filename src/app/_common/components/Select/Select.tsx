@@ -1,25 +1,27 @@
 import clsx from "clsx";
-import { SelectHTMLAttributes, useId } from "react";
+import { OptionHTMLAttributes, SelectHTMLAttributes, useId } from "react";
 import { PiCaretDownBold } from "react-icons/pi";
 
 import styles from "./Select.module.css";
 
-export interface SelectOption<T = unknown> {
-  value: T;
+export interface SelectOption {
+  value: SelectValue;
   label: string;
 }
 
-interface SelectProps<T = unknown>
-  extends Omit<SelectHTMLAttributes<HTMLSelectElement>, "onChange" | "value"> {
-  options: SelectOption<T>[];
+export interface SelectProps
+  extends Omit<SelectHTMLAttributes<HTMLSelectElement>, "value" | "onChange"> {
+  options: SelectOption[];
   placeholder?: string;
-  value: T | null;
-  onChange: (value: T) => void;
   label?: string;
   isLoading?: boolean;
+  value?: SelectValue;
+  onChange?: (value: SelectValue) => void;
 }
 
-export default function Select<T = unknown>({
+type SelectValue = string | number | null;
+
+export default function Select({
   options,
   placeholder = "Select an option",
   value,
@@ -29,19 +31,13 @@ export default function Select<T = unknown>({
   id,
   isLoading = false,
   ...rest
-}: SelectProps<T>) {
+}: SelectProps) {
   const generatedId = useId();
   const selectId = id || generatedId;
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedIndex = parseInt(event.target.value);
-    if (selectedIndex >= 0 && selectedIndex < options.length) {
-      onChange(options[selectedIndex].value);
-    }
+    onChange?.(event.target.value as unknown as SelectValue);
   };
-
-  const selectedIndex =
-    value !== null ? options.findIndex((option) => option.value === value) : -1;
 
   return (
     <div className={clsx(styles.selectWrapper, className)}>
@@ -53,7 +49,7 @@ export default function Select<T = unknown>({
       <div className={styles.selectContainer}>
         <select
           id={selectId}
-          value={selectedIndex >= 0 ? selectedIndex.toString() : ""}
+          value={value ?? ""}
           onChange={handleChange}
           className={styles.select}
           disabled={isLoading}
@@ -70,10 +66,12 @@ export default function Select<T = unknown>({
                   {placeholder}
                 </option>
               )}
-              {options.map((option, index) => (
+              {options.map((option) => (
                 <option
-                  key={createUniqueKey<T>(option.value)}
-                  value={index.toString()}
+                  key={option.value}
+                  value={
+                    option.value as OptionHTMLAttributes<HTMLOptionElement>["value"]
+                  }
                 >
                   {option.label}
                 </option>
@@ -85,16 +83,4 @@ export default function Select<T = unknown>({
       </div>
     </div>
   );
-}
-
-function createUniqueKey<T>(value: T): string {
-  if (value === null || value === undefined) {
-    return "null";
-  }
-
-  if (typeof value === "object") {
-    return JSON.stringify(value);
-  }
-
-  return String(value);
 }

@@ -2,10 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { LIST_BRANDS_URL } from "@/app/_common/constants";
 
-interface Brand {
-  id: string;
-  name: string;
-}
+import { Brand } from "../types";
 
 export default function useBrands() {
   const { data: brands, ...queryResponse } = useQuery({
