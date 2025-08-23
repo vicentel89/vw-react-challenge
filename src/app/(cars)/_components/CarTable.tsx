@@ -19,14 +19,17 @@ const columns: CarColumn[] = [
 ];
 
 export default function CarTable() {
-  const { cars, isLoading } = useCars();
+  const { cars, isLoading, isError } = useCars();
+
   return (
     <Table
       columns={columns}
       data={formatCarsData(cars || [])}
       caption="Cars"
-      emptyStateText="No cars available"
+      emptyFallback="No cars available"
+      errorFallback="Error loading cars. Please try again."
       isLoading={isLoading}
+      isError={isError}
     />
   );
 }

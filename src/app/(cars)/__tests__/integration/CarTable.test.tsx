@@ -119,4 +119,16 @@ describe("CarTable Integration", () => {
     expect(screen.queryByText("Volkswagen")).not.toBeInTheDocument();
     expect(screen.queryByText("Audi")).not.toBeInTheDocument();
   });
+
+  it("should display an error message when the API call fails", async () => {
+    server.use(errorHandler);
+
+    renderWithClient(<CarTable />);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("Error loading cars. Please try again.")
+      ).toBeInTheDocument();
+    });
+  });
 });

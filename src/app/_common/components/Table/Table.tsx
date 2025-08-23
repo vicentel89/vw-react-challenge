@@ -9,8 +9,10 @@ interface TableProps {
   data: Record<string, ReactNode>[];
   caption?: string;
   className?: string;
-  emptyStateText?: string;
+  emptyFallback?: ReactNode;
+  errorFallback?: ReactNode;
   isLoading?: boolean;
+  isError?: boolean;
 }
 
 export interface TableColumn {
@@ -25,7 +27,10 @@ export interface TableColumn {
  * @param data - Array of data rows where each row maps column keys to display values
  * @param caption - Optional table caption for accessibility
  * @param className - Additional CSS classes
- * @param emptyStateText - Text to display when no data is available
+ * @param emptyFallback - Content to display when no data is available
+ * @param errorFallback - Content to display when there's an error
+ * @param isLoading - Whether data is currently loading
+ * @param isError - Whether there's an error state
  *
  * @example
  * ```tsx
@@ -38,7 +43,7 @@ export interface TableColumn {
  *     { name: 'John Doe', email: 'john@example.com' }
  *   ]}
  *   caption="User table"
- *   emptyStateText="No users found"
+ *   emptyFallback="No users found"
  * />
  * ```
  */
@@ -47,8 +52,10 @@ export default function Table({
   data,
   caption,
   className,
-  emptyStateText = "No data available",
+  emptyFallback = "No data available",
+  errorFallback = "An error occurred",
   isLoading = false,
+  isError = false,
 }: TableProps) {
   const captionId = useId();
   const isEmpty = data.length === 0;
@@ -84,7 +91,9 @@ export default function Table({
             <BodyContent
               isLoading={isLoading}
               isEmpty={isEmpty}
-              emptyStateText={emptyStateText}
+              isError={isError}
+              emptyFallback={emptyFallback}
+              errorFallback={errorFallback}
               columns={columns}
               data={data}
             />
@@ -98,7 +107,9 @@ export default function Table({
 interface BodyContentProps {
   isLoading: boolean;
   isEmpty: boolean;
-  emptyStateText?: string;
+  isError: boolean;
+  emptyFallback?: ReactNode;
+  errorFallback?: ReactNode;
   columns: TableColumn[];
   data: Record<string, ReactNode>[];
 }
@@ -106,7 +117,9 @@ interface BodyContentProps {
 function BodyContent({
   isLoading,
   isEmpty,
-  emptyStateText,
+  isError,
+  emptyFallback,
+  errorFallback,
   columns,
   data,
 }: BodyContentProps) {
@@ -124,11 +137,21 @@ function BodyContent({
     );
   }
 
+  if (isError) {
+    return (
+      <tr>
+        <td colSpan={columns.length} className={styles.errorState} role="cell">
+          {errorFallback}
+        </td>
+      </tr>
+    );
+  }
+
   if (isEmpty) {
     return (
       <tr>
         <td colSpan={columns.length} className={styles.emptyState} role="cell">
-          {emptyStateText}
+          {emptyFallback}
         </td>
       </tr>
     );
