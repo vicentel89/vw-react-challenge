@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 import { PiXBold } from "react-icons/pi";
 
 import styles from "./Modal.module.css";
@@ -11,6 +11,8 @@ interface ModalProps {
 }
 
 export function Modal({ isOpen, onClose, children }: ModalProps) {
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -21,6 +23,11 @@ export function Modal({ isOpen, onClose, children }: ModalProps) {
     if (isOpen) {
       document.addEventListener("keydown", handleEscape);
       document.body.style.overflow = "hidden";
+
+      // Focus the close button when modal opens
+      setTimeout(() => {
+        closeButtonRef.current?.focus();
+      }, 0);
     }
 
     return () => {
@@ -49,6 +56,7 @@ export function Modal({ isOpen, onClose, children }: ModalProps) {
       >
         <div className={styles.header}>
           <IconButton
+            ref={closeButtonRef}
             icon={<PiXBold size={20} />}
             aria-label="Close modal"
             onClick={onClose}

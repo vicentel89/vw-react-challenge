@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { ReactElement, ButtonHTMLAttributes } from "react";
+import { ReactElement, ButtonHTMLAttributes, forwardRef } from "react";
 
 import styles from "./IconButton.module.css";
 
@@ -8,19 +8,20 @@ interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   "aria-label": string;
 }
 
-export function IconButton({
-  icon,
-  className,
-  "aria-label": ariaLabel,
-  ...props
-}: IconButtonProps) {
-  return (
-    <button
-      className={clsx(styles.iconButton, className)}
-      aria-label={ariaLabel}
-      {...props}
-    >
-      {icon}
-    </button>
-  );
-}
+export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
+  function IconButton(
+    { icon, className, "aria-label": ariaLabel, ...props },
+    ref
+  ) {
+    return (
+      <button
+        ref={ref}
+        className={clsx(styles.iconButton, className)}
+        aria-label={ariaLabel}
+        {...props}
+      >
+        {icon}
+      </button>
+    );
+  }
+);
