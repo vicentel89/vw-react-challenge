@@ -2,6 +2,7 @@
 
 import Button from "@/app/_common/components/Button/Button";
 import { Modal } from "@/app/_common/components/Modal/Modal";
+import Select from "@/app/_common/components/Select/Select";
 import Table, { TableColumn } from "@/app/_common/components/Table/Table";
 import { useToggle } from "@/app/_common/hooks/useToggle";
 
@@ -43,7 +44,15 @@ export default function CarTable() {
       />
 
       <Modal isOpen={isCreateModelOpen} onClose={toggleCreateModel}>
-        create car modal
+        <Select
+          options={[
+            { value: "option1", label: "Option 1" },
+            { value: "option2", label: "Option 2" },
+            { value: "option3", label: "Option 3" },
+          ]}
+          value=""
+          onChange={(value) => console.log(value)}
+        />
       </Modal>
     </>
   );
