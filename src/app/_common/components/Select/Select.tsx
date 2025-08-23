@@ -16,6 +16,7 @@ interface SelectProps<T = unknown>
   value: T | null;
   onChange: (value: T) => void;
   label?: string;
+  isLoading?: boolean;
 }
 
 export default function Select<T = unknown>({
@@ -26,6 +27,7 @@ export default function Select<T = unknown>({
   label,
   className,
   id,
+  isLoading = false,
   ...rest
 }: SelectProps<T>) {
   const generatedId = useId();
@@ -54,21 +56,30 @@ export default function Select<T = unknown>({
           value={selectedIndex >= 0 ? selectedIndex.toString() : ""}
           onChange={handleChange}
           className={styles.select}
+          disabled={isLoading}
           {...rest}
         >
-          {placeholder && (
-            <option value="" disabled hidden>
-              {placeholder}
+          {isLoading ? (
+            <option value="" disabled>
+              Loading...
             </option>
+          ) : (
+            <>
+              {placeholder && (
+                <option value="" disabled hidden>
+                  {placeholder}
+                </option>
+              )}
+              {options.map((option, index) => (
+                <option
+                  key={createUniqueKey<T>(option.value)}
+                  value={index.toString()}
+                >
+                  {option.label}
+                </option>
+              ))}
+            </>
           )}
-          {options.map((option, index) => (
-            <option
-              key={createUniqueKey<T>(option.value)}
-              value={index.toString()}
-            >
-              {option.label}
-            </option>
-          ))}
         </select>
         <PiCaretDownBold className={styles.icon} aria-hidden="true" />
       </div>
