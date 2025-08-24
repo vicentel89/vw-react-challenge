@@ -14,6 +14,7 @@ import Select from "@/app/_common/components/Select/Select";
 
 import styles from "./CreateCarModal.module.css";
 import useBrands from "../_api/useBrands";
+import useCreateCar from "../_api/useCreateCar";
 import useModels from "../_api/useModels";
 
 const createCarSchema = z.object({
@@ -69,8 +70,21 @@ export default function CreateCarModal({
     mode: "onSubmit",
   });
 
+  const createCarMutation = useCreateCar();
   const handleSubmit = formSubmit((data) => {
-    console.log(data);
+    const carData = {
+      brand: data.brand!,
+      model: data.model!,
+      year: data.year!,
+      mileage: data.mileage!,
+      color: data.color!,
+    };
+
+    createCarMutation.mutate(carData, {
+      onSuccess: () => {
+        handleClose();
+      },
+    });
   });
 
   const handleClose = () => {
@@ -90,7 +104,9 @@ export default function CreateCarModal({
           <Button type="button" variant="secondary" onClick={handleClose}>
             Cancel
           </Button>
-          <Button type="submit">Create Car</Button>
+          <Button type="submit" disabled={createCarMutation.isPending}>
+            Create Car
+          </Button>
         </div>
       </form>
     </Modal>
