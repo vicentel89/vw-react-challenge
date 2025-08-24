@@ -3,6 +3,7 @@ import { OptionHTMLAttributes, SelectHTMLAttributes, useId } from "react";
 import { PiCaretDownBold } from "react-icons/pi";
 
 import styles from "./Select.module.css";
+import Loader from "../Loader/Loader";
 
 export interface SelectOption {
   value: SelectValue;
@@ -30,7 +31,7 @@ export default function Select({
   className,
   id,
   isLoading = false,
-  ...rest
+  ...props
 }: SelectProps) {
   const generatedId = useId();
   const selectId = id || generatedId;
@@ -53,33 +54,31 @@ export default function Select({
           onChange={handleChange}
           className={styles.select}
           disabled={isLoading}
-          {...rest}
+          {...props}
         >
-          {isLoading ? (
-            <option value="" disabled>
-              Loading...
+          {placeholder && (
+            <option value="" disabled hidden>
+              {placeholder}
             </option>
-          ) : (
-            <>
-              {placeholder && (
-                <option value="" disabled hidden>
-                  {placeholder}
-                </option>
-              )}
-              {options.map((option) => (
-                <option
-                  key={option.value}
-                  value={
-                    option.value as OptionHTMLAttributes<HTMLOptionElement>["value"]
-                  }
-                >
-                  {option.label}
-                </option>
-              ))}
-            </>
           )}
+          {options.map((option) => (
+            <option
+              key={option.value}
+              value={
+                option.value as OptionHTMLAttributes<HTMLOptionElement>["value"]
+              }
+            >
+              {option.label}
+            </option>
+          ))}
         </select>
-        <PiCaretDownBold className={styles.icon} aria-hidden="true" />
+        {isLoading ? (
+          <div className={styles.loaderContainer}>
+            <Loader size="sm" />
+          </div>
+        ) : (
+          <PiCaretDownBold className={styles.icon} aria-hidden="true" />
+        )}
       </div>
     </div>
   );
