@@ -1,11 +1,13 @@
-.container {
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: var(--spacing-lg);
-  padding-right: var(--spacing-lg);
+@layer components {
+  .container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--spacing-lg);
+    padding-right: var(--spacing-lg);
 
-  @media (--breakpoint-xl) {
-    max-width: var(--breakpoint-xl);
+    @media (--breakpoint-xl) {
+      max-width: var(--breakpoint-xl);
+    }
   }
 }

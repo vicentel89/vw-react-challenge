@@ -1,32 +1,34 @@
-.container {
-  padding: var(--spacing-xs);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.spinner {
-  animation: spin 1s linear infinite;
-  font-size: var(--font-size-24);
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
+@layer components {
+  .container {
+    padding: var(--spacing-xs);
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
-  to {
-    transform: rotate(360deg);
-  }
-}
 
-.screenReaderOnly {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  .spinner {
+    animation: spin 1s linear infinite;
+    font-size: var(--font-size-24);
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .screenReaderOnly {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
 }
