@@ -1,12 +1,16 @@
 "use client";
 
+import { ChangeEvent, useState } from "react";
+
 import Button from "@/app/_common/components/Button/Button";
 import Table, { TableColumn } from "@/app/_common/components/Table/Table";
+import TextInput from "@/app/_common/components/TextInput/TextInput";
 import { useToggle } from "@/app/_common/hooks/useToggle";
 
 import useCars from "../_api/useCars";
 import { formatCarsData } from "../_utils/formatCarsData";
 import { Car } from "../types";
+import styles from "./CarTable.module.css";
 import CreateCarModal from "./CreateCarModal";
 
 interface CarColumn extends TableColumn {
@@ -22,8 +26,13 @@ const columns: CarColumn[] = [
 ];
 
 export default function CarTable() {
-  const { cars, isLoading, isError } = useCars();
   const { isOpen: isCreateModelOpen, toggle: toggleCreateModel } = useToggle();
+  const [searchTerm, setSearchTerm] = useState("");
+  const { cars, isLoading, isError } = useCars({ search: searchTerm });
+
+  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
 
   return (
     <>
@@ -32,9 +41,18 @@ export default function CarTable() {
         data={formatCarsData(cars || [])}
         caption="Cars"
         actions={
-          <Button size="md" onClick={toggleCreateModel}>
-            Add Car
-          </Button>
+          <div className={styles.actions}>
+            <TextInput
+              size="sm"
+              placeholder="Search..."
+              aria-label="Search cars"
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
+            <Button size="md" onClick={toggleCreateModel}>
+              Add Car
+            </Button>
+          </div>
         }
         emptyFallback="No cars available"
         errorFallback="Error loading cars. Please try again."

@@ -216,4 +216,53 @@ describe("CarTable Integration", () => {
     expect(screen.getAllByText("Volkswagen")).toHaveLength(2);
     expect(screen.getAllByText("Golf")).toHaveLength(2);
   });
+
+  it("should filter cars based on search input", async () => {
+    const user = userEvent.setup();
+    server.use(successHandler);
+
+    renderWithClient(<CarTable />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Volkswagen")).toBeInTheDocument();
+    });
+
+    expect(screen.getByText("Audi")).toBeInTheDocument();
+    expect(screen.getByText("A3")).toBeInTheDocument();
+
+    const searchInput = screen.getByLabelText("Search cars");
+    await user.type(searchInput, "Volkswagen");
+
+    await waitFor(() => {
+      expect(screen.getByText("Volkswagen")).toBeInTheDocument();
+      expect(screen.getByText("Golf")).toBeInTheDocument();
+    });
+
+    expect(screen.queryByText("Audi")).not.toBeInTheDocument();
+    expect(screen.queryByText("A3")).not.toBeInTheDocument();
+
+    await user.clear(searchInput);
+    await user.type(searchInput, "Red");
+
+    await waitFor(() => {
+      expect(screen.getByText("Audi")).toBeInTheDocument();
+      expect(screen.getByText("A3")).toBeInTheDocument();
+      expect(screen.getByText("Red")).toBeInTheDocument();
+    });
+
+    expect(screen.queryByText("Volkswagen")).not.toBeInTheDocument();
+    expect(screen.queryByText("Golf")).not.toBeInTheDocument();
+    expect(screen.queryByText("Blue")).not.toBeInTheDocument();
+
+    await user.clear(searchInput);
+    await user.type(searchInput, "2019");
+
+    await waitFor(() => {
+      expect(screen.getByText("Audi")).toBeInTheDocument();
+      expect(screen.getByText("2019")).toBeInTheDocument();
+    });
+
+    expect(screen.queryByText("2020")).not.toBeInTheDocument();
+    expect(screen.queryByText("Volkswagen")).not.toBeInTheDocument();
+  });
 });
