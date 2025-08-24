@@ -18,11 +18,11 @@ interface CarColumn extends TableColumn {
 }
 
 const columns: CarColumn[] = [
-  { key: "brand", header: "Brand", width: "20%" },
-  { key: "model", header: "Model", width: "20%" },
-  { key: "year", header: "Year" },
-  { key: "mileage", header: "Mileage" },
-  { key: "color", header: "Color" },
+  { key: "brand", header: "Brand", width: "20%", sortable: true },
+  { key: "model", header: "Model", width: "20%", sortable: true },
+  { key: "year", header: "Year", sortable: true },
+  { key: "mileage", header: "Mileage", sortable: true },
+  { key: "color", header: "Color", sortable: true },
 ];
 
 export default function CarTable() {
@@ -58,6 +58,7 @@ export default function CarTable() {
         errorFallback="Error loading cars. Please try again."
         isLoading={isLoading}
         isError={isError}
+        isSortable
       />
 
       <CreateCarModal isOpen={isCreateModelOpen} onClose={toggleCreateModel} />
