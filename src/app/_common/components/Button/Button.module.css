@@ -77,13 +77,13 @@
 .md {
   padding: var(--spacing-sm) var(--spacing-lg);
   font-size: var(--font-size-md);
-  min-height: var(--size-md);
+  min-height: var(--size-2xl);
 }
 
 .lg {
   padding: var(--spacing-md) var(--spacing-xl);
   font-size: var(--font-size-lg);
-  min-height: var(--size-lg);
+  min-height: var(--size-3xl);
 }
 
 .disabled {

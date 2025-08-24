@@ -1,6 +1,6 @@
 For styling, use CSS modules. Create a .module.css file with the same name as your component (e.g., MyComponent.module.css) and import it in your component file.
 Use nesting and '&' in your CSS for better structure and readability. Use media queries inside classes blocks for responsive design. Use mobile first approach.
-Use tokens defined in global.css for colors, spacing, and other design elements.
+Use tokens defined in global.css for colors, spacing, and other design elements. Use custom media queries for breakpoints, they are in custom-media.css.
 Never use !important. You must check the specificity of your selectors and adjust them accordingly.
 If you need to add multiple classnames, use clsx.
 Use descriptive class and variable names; NEVER use abbreviations.
