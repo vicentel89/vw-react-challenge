@@ -1,7 +1,10 @@
 import clsx from "clsx";
 import { ReactNode, useId } from "react";
+import { PiCaretUpBold, PiCaretDownBold } from "react-icons/pi";
 
 import styles from "./Table.module.css";
+import { useTableSort, SortConfig } from "./useTableSort";
+import { IconButton } from "../IconButton/IconButton";
 import Loader from "../Loader/Loader";
 
 interface TableProps {
@@ -14,12 +17,14 @@ interface TableProps {
   errorFallback?: ReactNode;
   isLoading?: boolean;
   isError?: boolean;
+  isSortable?: boolean;
 }
 
 export interface TableColumn {
   key: string;
   header: string;
   width?: string;
+  sortable?: boolean;
 }
 
 /**
@@ -58,9 +63,28 @@ export default function Table({
   errorFallback = "An error occurred",
   isLoading = false,
   isError = false,
+  isSortable = false,
 }: TableProps) {
   const captionId = useId();
   const isEmpty = data.length === 0;
+
+  const { sortedData, sortConfig, sortByColumn, removeSorting } =
+    useTableSort(data);
+
+  const handleSort = (columnKey: string) => {
+    if (!isSortable) return;
+
+    const column = columns.find((col) => col.key === columnKey);
+    if (!column?.sortable) return;
+
+    if (!sortConfig || sortConfig.column !== columnKey) {
+      sortByColumn(columnKey, "asc");
+    } else if (sortConfig.direction === "asc") {
+      sortByColumn(columnKey, "desc");
+    } else {
+      removeSorting();
+    }
+  };
 
   return (
     <div className={clsx(styles.tableContainer, className)}>
@@ -81,14 +105,13 @@ export default function Table({
           <thead>
             <tr>
               {columns.map((column) => (
-                <th
+                <TableHeader
                   key={column.key}
-                  className={styles.th}
-                  style={column.width ? { width: column.width } : undefined}
-                  scope="col"
-                >
-                  {column.header}
-                </th>
+                  column={column}
+                  isSortable={isSortable}
+                  sortConfig={sortConfig}
+                  onSort={handleSort}
+                />
               ))}
             </tr>
           </thead>
@@ -100,12 +123,67 @@ export default function Table({
               emptyFallback={emptyFallback}
               errorFallback={errorFallback}
               columns={columns}
-              data={data}
+              data={sortedData}
             />
           </tbody>
         </table>
       </div>
     </div>
+  );
+}
+
+interface TableHeaderProps {
+  column: TableColumn;
+  isSortable: boolean;
+  sortConfig: SortConfig | null;
+  onSort: (columnKey: string) => void;
+}
+
+function TableHeader({
+  column,
+  isSortable,
+  sortConfig,
+  onSort,
+}: TableHeaderProps) {
+  const isActive = sortConfig?.column === column.key;
+  const canSort = isSortable && column.sortable;
+  const direction = sortConfig?.direction;
+
+  const getSortIcon = () => {
+    if (!isActive) return <PiCaretUpBold />;
+    return direction === "asc" ? <PiCaretUpBold /> : <PiCaretDownBold />;
+  };
+
+  const getSortButtonLabel = () => {
+    if (!isActive) {
+      return `Sort by ${column.header} ascending`;
+    }
+    return direction === "asc"
+      ? `Sort by ${column.header} descending`
+      : `Remove ${column.header} sorting`;
+  };
+
+  return (
+    <th
+      className={clsx(styles.th, canSort && styles.sortableHeader)}
+      style={column.width ? { width: column.width } : undefined}
+      scope="col"
+    >
+      <div className={styles.headerContent}>
+        <span>{column.header}</span>
+        {canSort && (
+          <IconButton
+            icon={getSortIcon()}
+            aria-label={getSortButtonLabel()}
+            className={clsx(
+              styles.sortButton,
+              isActive && styles.sortButtonActive
+            )}
+            onClick={() => onSort(column.key)}
+          />
+        )}
+      </div>
+    </th>
   );
 }
 
