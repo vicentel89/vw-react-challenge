@@ -28,8 +28,19 @@
   }
 }
 
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-block: var(--spacing-sm);
+}
+
+.actions {
+  margin-left: auto;
+}
+
 .caption {
-  padding: var(--spacing-md);
+  padding-inline: var(--spacing-md);
   font-size: var(--font-size-md);
   font-weight: var(--font-weight-semibold);
   text-align: left;

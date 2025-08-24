@@ -1,8 +1,13 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
 
-import { LIST_CARS_URL } from "@/app/_common/constants";
+import {
+  LIST_CARS_URL,
+  LIST_BRANDS_URL,
+  LIST_MODELS_URL,
+} from "@/app/_common/constants";
+import renderWithClient from "@/app/_common/test-utils/renderWithClient";
 
 import { server } from "../../../../../jest.setup";
 import CarTable from "../../_components/CarTable";
@@ -27,8 +32,41 @@ const mockCarsData: Car[] = [
   },
 ];
 
+const mockBrandsData = [
+  { id: "1", name: "Volkswagen" },
+  { id: "2", name: "Audi" },
+];
+
+const mockVolkswagenModels = [
+  { id: "1", name: "Golf", brandId: "1" },
+  { id: "2", name: "Passat", brandId: "1" },
+];
+
+let createdCars: Car[] = [];
+
 const successHandler = http.get(LIST_CARS_URL, () => {
-  return HttpResponse.json(mockCarsData);
+  return HttpResponse.json([...mockCarsData, ...createdCars]);
+});
+
+const createCarHandler = http.post(LIST_CARS_URL, async ({ request }) => {
+  const newCar = (await request.json()) as Car;
+  createdCars.push(newCar);
+  return HttpResponse.json(newCar);
+});
+
+const brandsHandler = http.get(LIST_BRANDS_URL, () => {
+  return HttpResponse.json(mockBrandsData);
+});
+
+const modelsHandler = http.get(LIST_MODELS_URL, ({ request }) => {
+  const url = new URL(request.url);
+  const brandId = url.searchParams.get("brandId");
+
+  if (brandId === "1") {
+    return HttpResponse.json(mockVolkswagenModels);
+  }
+
+  return HttpResponse.json([]);
 });
 
 const errorHandler = http.get(LIST_CARS_URL, () => {
@@ -40,28 +78,14 @@ const emptyDataHandler = http.get(LIST_CARS_URL, () => {
 });
 
 const delayedHandler = http.get(LIST_CARS_URL, async () => {
-  // Add a delay to test loading state
   await new Promise((resolve) => setTimeout(resolve, 100));
   return HttpResponse.json(mockCarsData);
 });
 
-function renderWithClient(ui: React.ReactElement) {
-  const testQueryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        staleTime: 0,
-        gcTime: 0,
-      },
-    },
-  });
-
-  return render(
-    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>
-  );
-}
-
 describe("CarTable Integration", () => {
+  beforeEach(() => {
+    createdCars = [];
+  });
   it("should show a loading indicator when the API is loading", async () => {
     server.use(delayedHandler);
 
@@ -130,5 +154,66 @@ describe("CarTable Integration", () => {
         screen.getByText("Error loading cars. Please try again.")
       ).toBeInTheDocument();
     });
+  });
+
+  it("should show a new car in the table after creating it with the modal", async () => {
+    const user = userEvent.setup();
+    server.use(successHandler, createCarHandler, brandsHandler, modelsHandler);
+
+    renderWithClient(<CarTable />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Volkswagen")).toBeInTheDocument();
+    });
+
+    const addCarButton = screen.getByRole("button", { name: "Add Car" });
+    await user.click(addCarButton);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText("Brand *")).toBeInTheDocument();
+    });
+
+    const brandSelect = screen.getByLabelText("Brand *");
+    await waitFor(() => {
+      expect(brandSelect).toBeInTheDocument();
+      expect(
+        screen.getByRole("option", { name: "Volkswagen" })
+      ).toBeInTheDocument();
+    });
+
+    await user.selectOptions(brandSelect, "Volkswagen");
+
+    await waitFor(() => {
+      expect(screen.getByRole("option", { name: "Golf" })).toBeInTheDocument();
+    });
+
+    const modelSelect = screen.getByLabelText("Model *");
+    await user.selectOptions(modelSelect, "Golf");
+
+    const yearSelect = screen.getByLabelText("Year *");
+    await user.selectOptions(yearSelect, "2021");
+
+    const mileageSelect = screen.getByLabelText("Mileage *");
+    await user.selectOptions(mileageSelect, "10000");
+
+    const colorSelect = screen.getByLabelText("Color *");
+    await user.selectOptions(colorSelect, "green");
+
+    const createButton = screen.getByRole("button", { name: "Create Car" });
+    await user.click(createButton);
+
+    await waitFor(() => {
+      expect(screen.queryByLabelText("Brand *")).not.toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("2021")).toBeInTheDocument();
+    });
+
+    expect(screen.getByText("10.000 km")).toBeInTheDocument();
+    expect(screen.getByText("green")).toBeInTheDocument();
+
+    expect(screen.getAllByText("Volkswagen")).toHaveLength(2);
+    expect(screen.getAllByText("Golf")).toHaveLength(2);
   });
 });

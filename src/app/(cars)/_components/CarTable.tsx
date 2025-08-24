@@ -1,10 +1,13 @@
 "use client";
 
+import Button from "@/app/_common/components/Button/Button";
 import Table, { TableColumn } from "@/app/_common/components/Table/Table";
+import { useToggle } from "@/app/_common/hooks/useToggle";
 
 import useCars from "../_api/useCars";
 import { formatCarsData } from "../_utils/formatCarsData";
 import { Car } from "../types";
+import CreateCarModal from "./CreateCarModal";
 
 interface CarColumn extends TableColumn {
   key: keyof Omit<Car, "id">;
@@ -20,16 +23,26 @@ const columns: CarColumn[] = [
 
 export default function CarTable() {
   const { cars, isLoading, isError } = useCars();
+  const { isOpen: isCreateModelOpen, toggle: toggleCreateModel } = useToggle();
 
   return (
-    <Table
-      columns={columns}
-      data={formatCarsData(cars || [])}
-      caption="Cars"
-      emptyFallback="No cars available"
-      errorFallback="Error loading cars. Please try again."
-      isLoading={isLoading}
-      isError={isError}
-    />
+    <>
+      <Table
+        columns={columns}
+        data={formatCarsData(cars || [])}
+        caption="Cars"
+        actions={
+          <Button size="md" onClick={toggleCreateModel}>
+            Add Car
+          </Button>
+        }
+        emptyFallback="No cars available"
+        errorFallback="Error loading cars. Please try again."
+        isLoading={isLoading}
+        isError={isError}
+      />
+
+      <CreateCarModal isOpen={isCreateModelOpen} onClose={toggleCreateModel} />
+    </>
   );
 }

@@ -1,30 +1,18 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render } from "@testing-library/react";
-import { ReactElement } from "react";
 
-function createTestQueryClient() {
-  return new QueryClient({
+export default function renderWithClient(ui: React.ReactElement) {
+  const testQueryClient = new QueryClient({
     defaultOptions: {
       queries: {
         retry: false,
+        staleTime: 0,
+        gcTime: 0,
       },
     },
   });
-}
 
-export default function renderWithClient(ui: ReactElement) {
-  const testQueryClient = createTestQueryClient();
-  const { rerender, ...result } = render(
+  return render(
     <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>
   );
-
-  return {
-    ...result,
-    rerender: (rerenderUi: ReactElement) =>
-      rerender(
-        <QueryClientProvider client={testQueryClient}>
-          {rerenderUi}
-        </QueryClientProvider>
-      ),
-  };
 }
