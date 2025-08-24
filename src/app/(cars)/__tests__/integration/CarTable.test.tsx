@@ -1,8 +1,8 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 
 import { LIST_CARS_URL } from "@/app/_common/constants";
+import renderWithClient from "@/app/_common/test-utils/renderWithClient";
 
 import { server } from "../../../../../jest.setup";
 import CarTable from "../../_components/CarTable";
@@ -44,22 +44,6 @@ const delayedHandler = http.get(LIST_CARS_URL, async () => {
   await new Promise((resolve) => setTimeout(resolve, 100));
   return HttpResponse.json(mockCarsData);
 });
-
-function renderWithClient(ui: React.ReactElement) {
-  const testQueryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        staleTime: 0,
-        gcTime: 0,
-      },
-    },
-  });
-
-  return render(
-    <QueryClientProvider client={testQueryClient}>{ui}</QueryClientProvider>
-  );
-}
 
 describe("CarTable Integration", () => {
   it("should show a loading indicator when the API is loading", async () => {

@@ -23,6 +23,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 
   @media (min-width: 640px) {
     max-width: 600px;
@@ -33,10 +34,12 @@
   display: flex;
   justify-content: flex-end;
   padding: var(--spacing-lg) var(--spacing-lg) 0;
+  flex-shrink: 0;
 }
 
 .content {
   padding: var(--spacing-md) var(--spacing-lg) var(--spacing-lg);
   overflow-y: auto;
   flex: 1;
+  scrollbar-width: thin;
 }

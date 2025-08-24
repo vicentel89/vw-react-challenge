@@ -1,22 +1,26 @@
 import clsx from "clsx";
-import { SelectHTMLAttributes, useId } from "react";
+import { OptionHTMLAttributes, SelectHTMLAttributes, useId } from "react";
 import { PiCaretDownBold } from "react-icons/pi";
 
 import styles from "./Select.module.css";
+import Loader from "../Loader/Loader";
 
 export interface SelectOption {
-  value: string;
+  value: SelectValue;
   label: string;
 }
 
-interface SelectProps
-  extends Omit<SelectHTMLAttributes<HTMLSelectElement>, "onChange" | "value"> {
+export interface SelectProps
+  extends Omit<SelectHTMLAttributes<HTMLSelectElement>, "value" | "onChange"> {
   options: SelectOption[];
   placeholder?: string;
-  value: string;
-  onChange: (value: string) => void;
   label?: string;
+  isLoading?: boolean;
+  value?: SelectValue;
+  onChange?: (value: SelectValue) => void;
 }
+
+type SelectValue = string | number | null;
 
 export default function Select({
   options,
@@ -26,13 +30,14 @@ export default function Select({
   label,
   className,
   id,
-  ...rest
+  isLoading = false,
+  ...props
 }: SelectProps) {
   const generatedId = useId();
   const selectId = id || generatedId;
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    onChange(event.target.value);
+    onChange?.(event.target.value as unknown as SelectValue);
   };
 
   return (
@@ -45,10 +50,11 @@ export default function Select({
       <div className={styles.selectContainer}>
         <select
           id={selectId}
-          value={value}
+          value={value ?? ""}
           onChange={handleChange}
           className={styles.select}
-          {...rest}
+          disabled={isLoading}
+          {...props}
         >
           {placeholder && (
             <option value="" disabled hidden>
@@ -56,12 +62,23 @@ export default function Select({
             </option>
           )}
           {options.map((option) => (
-            <option key={option.value} value={option.value}>
+            <option
+              key={option.value}
+              value={
+                option.value as OptionHTMLAttributes<HTMLOptionElement>["value"]
+              }
+            >
               {option.label}
             </option>
           ))}
         </select>
-        <PiCaretDownBold className={styles.icon} aria-hidden="true" />
+        {isLoading ? (
+          <div className={styles.loaderContainer}>
+            <Loader size="sm" />
+          </div>
+        ) : (
+          <PiCaretDownBold className={styles.icon} aria-hidden="true" />
+        )}
       </div>
     </div>
   );
