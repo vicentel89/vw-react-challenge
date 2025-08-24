@@ -18,6 +18,8 @@ export interface SelectProps
   isLoading?: boolean;
   value?: SelectValue;
   onChange?: (value: SelectValue) => void;
+  error?: string;
+  required?: boolean;
 }
 
 type SelectValue = string | number | null;
@@ -31,13 +33,27 @@ export default function Select({
   className,
   id,
   isLoading = false,
+  error,
+  required = false,
   ...props
 }: SelectProps) {
   const generatedId = useId();
   const selectId = id || generatedId;
+  const errorId = `${selectId}-error`;
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    onChange?.(event.target.value as unknown as SelectValue);
+    const selectedValue = event.target.value;
+
+    if (selectedValue === "") {
+      onChange?.(null as SelectValue);
+      return;
+    }
+
+    const option = options.find(
+      (currentOption) => String(currentOption.value) === selectedValue
+    );
+    const convertedValue = option ? option.value : selectedValue;
+    onChange?.(convertedValue as SelectValue);
   };
 
   return (
@@ -45,6 +61,7 @@ export default function Select({
       {label && (
         <label htmlFor={selectId} className={styles.label}>
           {label}
+          {required && <span aria-hidden="true"> *</span>}
         </label>
       )}
       <div className={styles.selectContainer}>
@@ -52,8 +69,11 @@ export default function Select({
           id={selectId}
           value={value ?? ""}
           onChange={handleChange}
-          className={styles.select}
+          className={clsx(styles.select, error && styles.selectError)}
           disabled={isLoading}
+          aria-required={required}
+          aria-invalid={!!error}
+          aria-describedby={error ? errorId : undefined}
           {...props}
         >
           {placeholder && (
@@ -80,6 +100,16 @@ export default function Select({
           <PiCaretDownBold className={styles.icon} aria-hidden="true" />
         )}
       </div>
+      {error && (
+        <div
+          id={errorId}
+          className={styles.error}
+          role="alert"
+          aria-live="polite"
+        >
+          {error}
+        </div>
+      )}
     </div>
   );
 }

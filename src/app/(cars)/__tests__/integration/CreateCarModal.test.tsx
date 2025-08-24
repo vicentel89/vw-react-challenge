@@ -63,7 +63,7 @@ describe("CreateCarModal Integration", () => {
     renderWithClient(<CreateCarModal isOpen={true} onClose={() => {}} />);
 
     await waitFor(() => {
-      expect(screen.getByLabelText("Brand")).toBeInTheDocument();
+      expect(screen.getByLabelText("Brand *")).toBeInTheDocument();
     });
 
     await waitFor(() => {
@@ -85,7 +85,7 @@ describe("CreateCarModal Integration", () => {
       expect(screen.getByText("Volkswagen")).toBeInTheDocument();
     });
 
-    const brandSelect = screen.getByLabelText("Brand");
+    const brandSelect = screen.getByLabelText("Brand *");
     await user.selectOptions(brandSelect, "Volkswagen");
 
     await waitFor(() => {
@@ -95,7 +95,7 @@ describe("CreateCarModal Integration", () => {
     expect(screen.getByText("Passat")).toBeInTheDocument();
     expect(screen.getByText("Tiguan")).toBeInTheDocument();
 
-    const modelSelect = screen.getByLabelText("Model");
+    const modelSelect = screen.getByLabelText("Model *");
     expect(modelSelect).not.toBeDisabled();
   });
 
@@ -109,7 +109,7 @@ describe("CreateCarModal Integration", () => {
       expect(screen.getByText("Volkswagen")).toBeInTheDocument();
     });
 
-    const brandSelect = screen.getByLabelText("Brand");
+    const brandSelect = screen.getByLabelText("Brand *");
 
     await user.selectOptions(brandSelect, "Volkswagen");
     await waitFor(() => {
