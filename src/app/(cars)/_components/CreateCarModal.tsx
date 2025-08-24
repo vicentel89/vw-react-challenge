@@ -1,3 +1,4 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useMemo } from "react";
 import {
   useController,
@@ -5,6 +6,7 @@ import {
   useForm,
   useWatch,
 } from "react-hook-form";
+import { z } from "zod";
 
 import Button from "@/app/_common/components/Button/Button";
 import { Modal, ModalProps } from "@/app/_common/components/Modal/Modal";
@@ -13,6 +15,29 @@ import Select from "@/app/_common/components/Select/Select";
 import styles from "./CreateCarModal.module.css";
 import useBrands from "../_api/useBrands";
 import useModels from "../_api/useModels";
+
+const createCarSchema = z.object({
+  brand: z
+    .string()
+    .nullable()
+    .refine((val) => val !== null && val !== "", "Brand is required"),
+  model: z
+    .string()
+    .nullable()
+    .refine((val) => val !== null && val !== "", "Model is required"),
+  year: z
+    .number()
+    .nullable()
+    .refine((val) => val !== null, "Year is required"),
+  mileage: z
+    .number()
+    .nullable()
+    .refine((val) => val !== null, "Mileage is required"),
+  color: z
+    .string()
+    .nullable()
+    .refine((val) => val !== null && val !== "", "Color is required"),
+});
 
 interface FormValues {
   brand: string | null;
@@ -33,6 +58,7 @@ export default function CreateCarModal({
     handleSubmit: formSubmit,
     reset,
   } = useForm<FormValues>({
+    resolver: zodResolver(createCarSchema),
     defaultValues: {
       brand: null,
       model: null,
@@ -40,7 +66,7 @@ export default function CreateCarModal({
       mileage: null,
       color: null,
     },
-    mode: "onChange",
+    mode: "onSubmit",
   });
 
   const handleSubmit = formSubmit((data) => {
@@ -54,7 +80,7 @@ export default function CreateCarModal({
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose}>
-      <form className={styles.form} onSubmit={handleSubmit}>
+      <form className={styles.form} onSubmit={handleSubmit} noValidate>
         <BrandSelect name="brand" control={control} />
         <ModelSelect name="model" control={control} />
         <YearSelect name="year" control={control} />
@@ -71,8 +97,10 @@ export default function CreateCarModal({
   );
 }
 
-function BrandSelect(props: UseControllerProps<FormValues>) {
-  const { field } = useController(props);
+type SelectComponentProps = UseControllerProps<FormValues>;
+
+function BrandSelect(props: SelectComponentProps) {
+  const { field, fieldState } = useController(props);
   const { brands, isLoading } = useBrands();
 
   const brandOptions =
@@ -87,12 +115,14 @@ function BrandSelect(props: UseControllerProps<FormValues>) {
       label="Brand"
       options={brandOptions}
       isLoading={isLoading}
+      required
+      error={fieldState.error?.message}
     />
   );
 }
 
-function ModelSelect(props: UseControllerProps<FormValues>) {
-  const { field } = useController(props);
+function ModelSelect(props: SelectComponentProps) {
+  const { field, fieldState } = useController(props);
   const selectedBrandName = useWatch({ control: props.control, name: "brand" });
 
   const { brands } = useBrands();
@@ -124,12 +154,14 @@ function ModelSelect(props: UseControllerProps<FormValues>) {
       options={modelOptions}
       isLoading={isLoading}
       disabled={!selectedBrandName}
+      required
+      error={fieldState.error?.message}
     />
   );
 }
 
-function YearSelect(props: UseControllerProps<FormValues>) {
-  const { field } = useController(props);
+function YearSelect(props: SelectComponentProps) {
+  const { field, fieldState } = useController(props);
 
   const options = [
     { value: 2015, label: "2015" },
@@ -143,11 +175,19 @@ function YearSelect(props: UseControllerProps<FormValues>) {
     { value: 2023, label: "2023" },
   ];
 
-  return <Select {...field} label="Year" options={options} />;
+  return (
+    <Select
+      {...field}
+      label="Year"
+      options={options}
+      required
+      error={fieldState.error?.message}
+    />
+  );
 }
 
-function MileageSelect(props: UseControllerProps<FormValues>) {
-  const { field } = useController(props);
+function MileageSelect(props: SelectComponentProps) {
+  const { field, fieldState } = useController(props);
 
   const options = [
     { value: 5000, label: "5.000 km" },
@@ -158,11 +198,19 @@ function MileageSelect(props: UseControllerProps<FormValues>) {
     { value: 30000, label: "30.000 km" },
   ];
 
-  return <Select {...field} label="Mileage" options={options} />;
+  return (
+    <Select
+      {...field}
+      label="Mileage"
+      options={options}
+      required
+      error={fieldState.error?.message}
+    />
+  );
 }
 
-function ColorSelect(props: UseControllerProps<FormValues>) {
-  const { field } = useController(props);
+function ColorSelect(props: SelectComponentProps) {
+  const { field, fieldState } = useController(props);
 
   const options = [
     { value: "red", label: "Red" },
@@ -177,5 +225,13 @@ function ColorSelect(props: UseControllerProps<FormValues>) {
     { value: "white", label: "White" },
   ];
 
-  return <Select {...field} label="Color" options={options} />;
+  return (
+    <Select
+      {...field}
+      label="Color"
+      options={options}
+      required
+      error={fieldState.error?.message}
+    />
+  );
 }
