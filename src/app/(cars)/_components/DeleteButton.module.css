@@ -1,11 +1,13 @@
-.deleteButton {
-  color: var(--danger-color);
+.modalTitle {
+  margin-bottom: var(--spacing-xs);
+}
 
-  &:hover {
-    background-color: var(--danger-background-hover);
-  }
+.modalButtonContainer {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
 
-  &:focus {
-    outline-color: var(--danger-color);
+  @media (--breakpoint-sm) {
+    justify-content: flex-end;
   }
 }

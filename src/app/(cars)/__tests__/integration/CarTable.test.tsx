@@ -283,8 +283,6 @@ describe("CarTable Integration", () => {
   it("should remove a car from the table when delete button is clicked", async () => {
     const user = userEvent.setup();
 
-    jest.spyOn(window, "confirm").mockReturnValue(true);
-
     server.use(successHandler, deleteCarHandler);
 
     renderWithClient(<CarTable />);
@@ -299,9 +297,16 @@ describe("CarTable Integration", () => {
     const deleteButtons = screen.getAllByLabelText("Delete car");
     await user.click(deleteButtons[0]); // Delete first car (Volkswagen)
 
-    expect(window.confirm).toHaveBeenCalledWith(
-      "Are you sure you want to delete this car?"
-    );
+    await waitFor(() => {
+      expect(screen.getByText("Delete Car")).toBeInTheDocument();
+    });
+
+    expect(
+      screen.getByText("Are you sure you want to delete this car?")
+    ).toBeInTheDocument();
+
+    const confirmDeleteButton = screen.getByRole("button", { name: "Delete" });
+    await user.click(confirmDeleteButton);
 
     await waitFor(() => {
       expect(screen.queryByText("Volkswagen")).not.toBeInTheDocument();
