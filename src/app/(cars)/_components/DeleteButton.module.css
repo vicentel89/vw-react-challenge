@@ -1,0 +1,11 @@
+.deleteButton {
+  color: var(--danger-color);
+
+  &:hover {
+    background-color: var(--danger-background-hover);
+  }
+
+  &:focus {
+    outline-color: var(--danger-color);
+  }
+}

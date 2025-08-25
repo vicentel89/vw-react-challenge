@@ -25,6 +25,7 @@ export interface TableColumn {
   headerText: string;
   width?: string;
   sortable?: boolean;
+  cellComponent?: (row: Record<string, ReactNode>) => ReactNode;
 }
 
 /**
@@ -246,7 +247,9 @@ function BodyContent({
         <tr key={index} className={styles.tr}>
           {columns.map((column) => (
             <td key={column.key} className={styles.td}>
-              {row[column.key]}
+              {column.cellComponent
+                ? column.cellComponent(row)
+                : row[column.key]}
             </td>
           ))}
         </tr>

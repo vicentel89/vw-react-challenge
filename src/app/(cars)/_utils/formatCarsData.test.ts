@@ -26,6 +26,7 @@ describe("formatCarsData", () => {
 
     expect(result).toHaveLength(2);
     expect(result[0]).toEqual({
+      id: "1",
       brand: "Volkswagen",
       model: "Golf",
       year: 2020,
@@ -33,19 +34,12 @@ describe("formatCarsData", () => {
       color: "Blue",
     });
     expect(result[1]).toEqual({
+      id: "2",
       brand: "Audi",
       model: "A3",
       year: 2019,
       mileage: "50.000 km",
       color: "Red",
-    });
-  });
-
-  it("removes id field from each car", () => {
-    const result = formatCarsData(mockCars);
-
-    result.forEach((car) => {
-      expect(car).not.toHaveProperty("id");
     });
   });
 
@@ -89,6 +83,7 @@ describe("formatCarsData", () => {
     const result = formatCarsData(singleCar);
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
+      id: "1",
       brand: "Tesla",
       model: "Model S",
       year: 2022,
