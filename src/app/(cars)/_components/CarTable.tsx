@@ -12,17 +12,24 @@ import { formatCarsData } from "../_utils/formatCarsData";
 import { Car } from "../types";
 import styles from "./CarTable.module.css";
 import CreateCarModal from "./CreateCarModal";
+import DeleteButton from "./DeleteButton";
 
 interface CarColumn extends TableColumn {
-  key: keyof Omit<Car, "id">;
+  key: keyof Omit<Car, "id"> | "actions";
 }
 
 const columns: CarColumn[] = [
-  { key: "brand", header: "Brand", width: "20%", sortable: true },
-  { key: "model", header: "Model", width: "20%", sortable: true },
-  { key: "year", header: "Year", sortable: true },
-  { key: "mileage", header: "Mileage", sortable: true },
-  { key: "color", header: "Color", sortable: true },
+  { key: "brand", headerText: "Brand", width: "20%", sortable: true },
+  { key: "model", headerText: "Model", width: "20%", sortable: true },
+  { key: "year", headerText: "Year", sortable: true },
+  { key: "mileage", headerText: "Mileage", sortable: true },
+  { key: "color", headerText: "Color", sortable: true },
+  {
+    key: "actions",
+    headerText: "",
+    width: "56px",
+    cellComponent: (row) => <DeleteButton row={row} />,
+  },
 ];
 
 export default function CarTable() {

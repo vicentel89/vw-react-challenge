@@ -6,7 +6,7 @@ export function formatCarsData(
 ): Array<Record<string, string | number>> {
   if (!cars) return [];
 
-  const formattedCars = cars.map(({ id: _id, mileage, ...car }) => ({
+  const formattedCars = cars.map(({ mileage, ...car }) => ({
     ...car,
     mileage: formatMileage(mileage),
   }));

@@ -43,15 +43,28 @@ const mockVolkswagenModels = [
 ];
 
 let createdCars: Car[] = [];
+let deletedCarIds: string[] = [];
 
 const successHandler = http.get(LIST_CARS_URL, () => {
-  return HttpResponse.json([...mockCarsData, ...createdCars]);
+  const remainingMockCars = mockCarsData.filter(
+    (car) => !deletedCarIds.includes(car.id)
+  );
+  const remainingCreatedCars = createdCars.filter(
+    (car) => !deletedCarIds.includes(car.id)
+  );
+  return HttpResponse.json([...remainingMockCars, ...remainingCreatedCars]);
 });
 
 const createCarHandler = http.post(LIST_CARS_URL, async ({ request }) => {
   const newCar = (await request.json()) as Car;
   createdCars.push(newCar);
   return HttpResponse.json(newCar);
+});
+
+const deleteCarHandler = http.delete(`${LIST_CARS_URL}/:id`, ({ params }) => {
+  const { id } = params;
+  deletedCarIds.push(String(id));
+  return HttpResponse.json({});
 });
 
 const brandsHandler = http.get(LIST_BRANDS_URL, () => {
@@ -85,6 +98,7 @@ const delayedHandler = http.get(LIST_CARS_URL, async () => {
 describe("CarTable Integration", () => {
   beforeEach(() => {
     createdCars = [];
+    deletedCarIds = [];
   });
   it("should show a loading indicator when the API is loading", async () => {
     server.use(delayedHandler);
@@ -264,5 +278,44 @@ describe("CarTable Integration", () => {
 
     expect(screen.queryByText("2020")).not.toBeInTheDocument();
     expect(screen.queryByText("Volkswagen")).not.toBeInTheDocument();
+  });
+
+  it("should remove a car from the table when delete button is clicked", async () => {
+    const user = userEvent.setup();
+
+    jest.spyOn(window, "confirm").mockReturnValue(true);
+
+    server.use(successHandler, deleteCarHandler);
+
+    renderWithClient(<CarTable />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Volkswagen")).toBeInTheDocument();
+    });
+
+    expect(screen.getByText("Audi")).toBeInTheDocument();
+    expect(screen.getAllByLabelText("Delete car")).toHaveLength(2);
+
+    const deleteButtons = screen.getAllByLabelText("Delete car");
+    await user.click(deleteButtons[0]); // Delete first car (Volkswagen)
+
+    expect(window.confirm).toHaveBeenCalledWith(
+      "Are you sure you want to delete this car?"
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByText("Volkswagen")).not.toBeInTheDocument();
+    });
+
+    expect(screen.queryByText("Golf")).not.toBeInTheDocument();
+    expect(screen.queryByText("Blue")).not.toBeInTheDocument();
+    expect(screen.queryByText("2020")).not.toBeInTheDocument();
+
+    expect(screen.getByText("Audi")).toBeInTheDocument();
+    expect(screen.getByText("A3")).toBeInTheDocument();
+    expect(screen.getByText("Red")).toBeInTheDocument();
+    expect(screen.getByText("2019")).toBeInTheDocument();
+
+    expect(screen.getAllByLabelText("Delete car")).toHaveLength(1);
   });
 });

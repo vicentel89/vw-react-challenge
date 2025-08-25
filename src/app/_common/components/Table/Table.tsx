@@ -22,9 +22,10 @@ interface TableProps {
 
 export interface TableColumn {
   key: string;
-  header: string;
+  headerText: string;
   width?: string;
   sortable?: boolean;
+  cellComponent?: (row: Record<string, ReactNode>) => ReactNode;
 }
 
 /**
@@ -42,8 +43,8 @@ export interface TableColumn {
  * ```tsx
  * <Table
  *   columns={[
- *     { key: 'name', header: 'Name', width: '30%' },
- *     { key: 'email', header: 'Email' },
+ *     { key: 'name', headerText: 'Name', width: '30%' },
+ *     { key: 'email', headerText: 'Email' },
  *   ]}
  *   data={[
  *     { name: 'John Doe', email: 'john@example.com' }
@@ -156,11 +157,11 @@ function TableHeader({
 
   const getSortButtonLabel = () => {
     if (!isActive) {
-      return `Sort by ${column.header} ascending`;
+      return `Sort by ${column.headerText} ascending`;
     }
     return direction === "asc"
-      ? `Sort by ${column.header} descending`
-      : `Remove ${column.header} sorting`;
+      ? `Sort by ${column.headerText} descending`
+      : `Remove ${column.headerText} sorting`;
   };
 
   return (
@@ -170,7 +171,7 @@ function TableHeader({
       scope="col"
     >
       <div className={styles.headerContent}>
-        <span>{column.header}</span>
+        <span>{column.headerText}</span>
         {canSort && (
           <IconButton
             icon={getSortIcon()}
@@ -246,7 +247,9 @@ function BodyContent({
         <tr key={index} className={styles.tr}>
           {columns.map((column) => (
             <td key={column.key} className={styles.td}>
-              {row[column.key]}
+              {column.cellComponent
+                ? column.cellComponent(row)
+                : row[column.key]}
             </td>
           ))}
         </tr>
