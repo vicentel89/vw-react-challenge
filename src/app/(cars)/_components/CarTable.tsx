@@ -18,11 +18,11 @@ interface CarColumn extends TableColumn {
 }
 
 const columns: CarColumn[] = [
-  { key: "brand", header: "Brand", width: "20%", sortable: true },
-  { key: "model", header: "Model", width: "20%", sortable: true },
-  { key: "year", header: "Year", sortable: true },
-  { key: "mileage", header: "Mileage", sortable: true },
-  { key: "color", header: "Color", sortable: true },
+  { key: "brand", headerText: "Brand", width: "20%", sortable: true },
+  { key: "model", headerText: "Model", width: "20%", sortable: true },
+  { key: "year", headerText: "Year", sortable: true },
+  { key: "mileage", headerText: "Mileage", sortable: true },
+  { key: "color", headerText: "Color", sortable: true },
 ];
 
 export default function CarTable() {
